@@ -6,8 +6,6 @@ const todoRouter = require("./routes/todos");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const frontendPath = path.join(__dirname, "..", "todo-firebase");
-const frontendIndex = path.join(frontendPath, "index.html");
 
 app.use((req, res, next) => {
   const allowedOrigins = [
@@ -43,17 +41,11 @@ app.use(express.json());
 app.use("/todos", todoRouter);
 
 app.get("/health", (req, res) => {
-  res.send("Todo backend is running.");
+  res.json({ status: "ok", message: "Todo backend is running." });
 });
 
-app.get(["/", "/index.html"], (req, res) => {
-  res.sendFile(frontendIndex);
-});
-
-app.use(express.static(frontendPath));
-
-app.get(/^\/(?!todos(?:\/|$)|health$).*/, (req, res) => {
-  res.sendFile(frontendIndex);
+app.get("/", (req, res) => {
+  res.json({ message: "Todo backend is running." });
 });
 
 const startServer = async () => {
