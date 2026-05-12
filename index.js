@@ -6,6 +6,14 @@ const todoRouter = require("./routes/todos");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const configuredOrigins = [
+  process.env.CLIENT_ORIGIN,
+  process.env.CLIENT_ORIGINS,
+]
+  .filter(Boolean)
+  .flatMap((origins) => origins.split(","))
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use((req, res, next) => {
   const allowedOrigins = [
@@ -15,8 +23,9 @@ app.use((req, res, next) => {
     "http://127.0.0.1:5173",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
+    "https://vibe-todo-frontend-gilt.vercel.app",
     "null",
-    process.env.CLIENT_ORIGIN,
+    ...configuredOrigins,
   ].filter(Boolean);
   const origin = req.headers.origin;
 
