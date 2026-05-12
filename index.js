@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   ].filter(Boolean);
   const origin = req.headers.origin;
 
-  if (!origin || allowedOrigins.includes(origin)) {
+  if (!origin || allowedOrigins.includes(origin) || isVercelFrontendOrigin(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin || `http://localhost:${PORT}`);
   }
 
@@ -45,6 +45,20 @@ app.use((req, res, next) => {
 
   next();
 });
+
+function isVercelFrontendOrigin(origin) {
+  try {
+    const { protocol, hostname } = new URL(origin);
+
+    return (
+      protocol === "https:" &&
+      hostname.endsWith(".vercel.app") &&
+      /^vibe-todo-frontend(?:-[a-z0-9-]+)?\.vercel\.app$/.test(hostname)
+    );
+  } catch {
+    return false;
+  }
+}
 
 app.use(express.json());
 app.use("/todos", todoRouter);
